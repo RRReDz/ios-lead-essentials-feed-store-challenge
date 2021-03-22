@@ -20,6 +20,7 @@
 		08CE2BB52285BEF100183A1B /* FeedStoreChallengeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08CE2BB42285BEF100183A1B /* FeedStoreChallengeTests.swift */; };
 		3AF49F4D3FF1C741CF1A711F /* Pods_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1C62B81A1CAC0E11909FAE7 /* Pods_Tests.framework */; };
 		B9BC207CDA47A42FD6DF64B3 /* Pods_FeedStoreChallenge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D433E9C95B91FD2C915843D /* Pods_FeedStoreChallenge.framework */; };
+		F5A24C9D642FB5986A909E1D /* EntityInfo-FeedStoreChallenge.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = FECC0D2EBF1901017281BEA0 /* EntityInfo-FeedStoreChallenge.generated.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,7 @@
 		7483ED19C78E4CF2BA04784F /* Pods-Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tests.release.xcconfig"; path = "Target Support Files/Pods-Tests/Pods-Tests.release.xcconfig"; sourceTree = "<group>"; };
 		B1C62B81A1CAC0E11909FAE7 /* Pods_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA266AF7BD6BAF7419D58381 /* Pods-FeedStoreChallenge.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FeedStoreChallenge.release.xcconfig"; path = "Target Support Files/Pods-FeedStoreChallenge/Pods-FeedStoreChallenge.release.xcconfig"; sourceTree = "<group>"; };
+		FECC0D2EBF1901017281BEA0 /* EntityInfo-FeedStoreChallenge.generated.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "EntityInfo-FeedStoreChallenge.generated.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +83,7 @@
 			children = (
 				08CE2B8D2285BBD100183A1B /* FeedStoreChallenge */,
 				08CE2B982285BBD100183A1B /* Tests */,
+				74E9B1B5852AA3246C927773 /* generated */,
 				08CE2B8C2285BBD100183A1B /* Products */,
 				B7448F4206DA5CCCC138CCF0 /* Pods */,
 				0DD20D8A1310E757BD9AAA58 /* Frameworks */,
@@ -140,6 +143,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		74E9B1B5852AA3246C927773 /* generated */ = {
+			isa = PBXGroup;
+			children = (
+				FECC0D2EBF1901017281BEA0 /* EntityInfo-FeedStoreChallenge.generated.swift */,
+			);
+			name = generated;
+			path = generated;
+			sourceTree = "<group>";
+		};
 		B7448F4206DA5CCCC138CCF0 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -171,6 +183,7 @@
 			buildPhases = (
 				FEE480A25D362D24AC696399 /* [CP] Check Pods Manifest.lock */,
 				08CE2B862285BBD100183A1B /* Headers */,
+				2FA921C0B16F99CF21027172 /* [OBX] Update Sourcery Generated Files */,
 				08CE2B872285BBD100183A1B /* Sources */,
 				08CE2B882285BBD100183A1B /* Frameworks */,
 				08CE2B892285BBD100183A1B /* Resources */,
@@ -283,6 +296,24 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		2FA921C0B16F99CF21027172 /* [OBX] Update Sourcery Generated Files */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "[OBX] Update Sourcery Generated Files";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"$PODS_ROOT/ObjectBox/generate_sources.sh\" -- --output \"$PROJECT_DIR/generated/EntityInfo-FeedStoreChallenge.generated.swift\" --model-json \"$PROJECT_DIR/model-FeedStoreChallenge.json\" # add this parameter to make entities exportable: --visibility public";
+		};
 		6C646396D47C37B5D9FE8B7A /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -331,6 +362,7 @@
 			files = (
 				08CE2BA62285BCB600183A1B /* FeedStore.swift in Sources */,
 				08CE2BA82285BCC600183A1B /* LocalFeedImage.swift in Sources */,
+				F5A24C9D642FB5986A909E1D /* EntityInfo-FeedStoreChallenge.generated.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
