@@ -32,7 +32,12 @@ public class ObjectBoxFeedStore: FeedStore {
 		self.storeURL = storeURL
 	}
 	
-	public func deleteCachedFeed(completion: @escaping DeletionCompletion) {}
+	public func deleteCachedFeed(completion: @escaping DeletionCompletion) {
+		let store = try! Store(directoryPath: storeURL.path)
+		try! store.box(for: Cache.self).removeAll()
+		try! store.box(for: StoreFeed.self).removeAll()
+		completion(nil)
+	}
 	
 	public func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
 		let store = try! Store(directoryPath: storeURL.path)
@@ -51,7 +56,6 @@ public class ObjectBoxFeedStore: FeedStore {
 		}
 		
 		try! store.box(for: Cache.self).removeAll()
-		
 		try! store.box(for: StoreFeed.self).put(storeFeeds)
 		
 		completion(nil)
