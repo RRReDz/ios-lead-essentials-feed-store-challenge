@@ -55,7 +55,7 @@ public class ObjectBoxFeedStore: FeedStore {
 			return storeFeed
 		}
 		
-		try! store.box(for: Cache.self).removeAll()
+		deleteCachedFeed { _ in }
 		try! store.box(for: StoreFeed.self).put(storeFeeds)
 		
 		completion(nil)
