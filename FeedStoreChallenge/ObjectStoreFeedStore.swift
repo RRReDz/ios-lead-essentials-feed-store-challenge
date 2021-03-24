@@ -28,51 +28,62 @@ class StoreFeed: Entity {
 public class ObjectBoxFeedStore: FeedStore {
 	private let storeURL: URL
 	private let store: Store
+	private let queue: DispatchQueue
 	
 	public init(storeURL: URL) throws {
 		self.storeURL = storeURL
 		self.store = try Store(directoryPath: storeURL.path)
+		self.queue = DispatchQueue(label: "\(type(of: self))", qos: .userInitiated, attributes: .concurrent)
 	}
 	
 	public func deleteCachedFeed(completion: @escaping DeletionCompletion) {
-		try! store.box(for: Cache.self).removeAll()
-		try! store.box(for: StoreFeed.self).removeAll()
-		
-		completion(nil)
+		queue.async(flags: .barrier) { [unowned self] in
+			self.clearCache()
+			completion(nil)
+		}
+	}
+	
+	private func clearCache() {
+		try! self.store.box(for: Cache.self).removeAll()
+		try! self.store.box(for: StoreFeed.self).removeAll()
 	}
 	
 	public func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
-		let cache = Cache()
-		cache.timestamp = timestamp
-		
-		let storeFeeds: [StoreFeed] = feed.map {
-			let storeFeed = StoreFeed()
-			storeFeed.modelId = $0.id.uuidString
-			storeFeed.description = $0.description
-			storeFeed.location = $0.location
-			storeFeed.url = $0.url.absoluteString
-			storeFeed.cache.target = cache
-			return storeFeed
+		queue.async(flags: .barrier) { [unowned self] in
+			let cache = Cache()
+			cache.timestamp = timestamp
+			
+			let storeFeeds: [StoreFeed] = feed.map {
+				let storeFeed = StoreFeed()
+				storeFeed.modelId = $0.id.uuidString
+				storeFeed.description = $0.description
+				storeFeed.location = $0.location
+				storeFeed.url = $0.url.absoluteString
+				storeFeed.cache.target = cache
+				return storeFeed
+			}
+			
+			self.clearCache()
+			try! self.store.box(for: StoreFeed.self).put(storeFeeds)
+			
+			completion(nil)
 		}
-		
-		deleteCachedFeed { _ in }
-		try! store.box(for: StoreFeed.self).put(storeFeeds)
-		
-		completion(nil)
 	}
 	
 	public func retrieve(completion: @escaping RetrievalCompletion) {
-		guard let cache = try! store.box(for: Cache.self).all().first else {
-			return completion(.empty)
+		queue.async { [unowned self] in
+			guard let cache = try! self.store.box(for: Cache.self).all().first else {
+				return completion(.empty)
+			}
+			let localFeed = cache.feed.map {
+				LocalFeedImage(
+					id: UUID(uuidString: $0.modelId)!,
+					description: $0.description,
+					location: $0.location,
+					url: URL(string: $0.url)!
+				)
+			}
+			completion(.found(feed: localFeed, timestamp: cache.timestamp))
 		}
-		let localFeed = cache.feed.map {
-			LocalFeedImage(
-				id: UUID(uuidString: $0.modelId)!,
-				description: $0.description,
-				location: $0.location,
-				url: URL(string: $0.url)!
-			)
-		}
-		completion(.found(feed: localFeed, timestamp: cache.timestamp))
 	}
 }
