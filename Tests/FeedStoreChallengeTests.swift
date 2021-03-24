@@ -7,6 +7,16 @@ import FeedStoreChallenge
 
 class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	
+	override func setUp() {
+		let storeURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("ObjectBoxFeedStore.store")
+		try? FileManager.default.removeItem(at: storeURL)
+	}
+
+	override func tearDown() {
+		let storeURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("ObjectBoxFeedStore.store")
+		try? FileManager.default.removeItem(at: storeURL)
+	}
+	
 	//  ***********************
 	//
 	//  Follow the TDD process:
@@ -32,9 +42,9 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	}
 	
 	func test_retrieve_deliversFoundValuesOnNonEmptyCache() throws {
-//		let sut = try makeSUT()
-//
-//		assertThatRetrieveDeliversFoundValuesOnNonEmptyCache(on: sut)
+		let sut = try makeSUT()
+
+		assertThatRetrieveDeliversFoundValuesOnNonEmptyCache(on: sut)
 	}
 	
 	func test_retrieve_hasNoSideEffectsOnNonEmptyCache() throws {
