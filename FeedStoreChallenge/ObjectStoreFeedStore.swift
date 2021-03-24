@@ -27,21 +27,21 @@ class StoreFeed: Entity {
 
 public class ObjectBoxFeedStore: FeedStore {
 	private let storeURL: URL
+	private let store: Store
 	
-	public init(storeURL: URL) {
+	public init(storeURL: URL) throws {
 		self.storeURL = storeURL
+		self.store = try Store(directoryPath: storeURL.path)
 	}
 	
 	public func deleteCachedFeed(completion: @escaping DeletionCompletion) {
-		let store = try! Store(directoryPath: storeURL.path)
 		try! store.box(for: Cache.self).removeAll()
 		try! store.box(for: StoreFeed.self).removeAll()
+		
 		completion(nil)
 	}
 	
 	public func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
-		let store = try! Store(directoryPath: storeURL.path)
-		
 		let cache = Cache()
 		cache.timestamp = timestamp
 		
@@ -62,8 +62,6 @@ public class ObjectBoxFeedStore: FeedStore {
 	}
 	
 	public func retrieve(completion: @escaping RetrievalCompletion) {
-		let store = try! Store(directoryPath: storeURL.path)
-		
 		guard let cache = try! store.box(for: Cache.self).all().first else {
 			return completion(.empty)
 		}
