@@ -8,13 +8,11 @@ import FeedStoreChallenge
 class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	
 	override func setUp() {
-		let storeURL = testSpecificURL()
-		try? FileManager.default.removeItem(at: storeURL)
+		deleteStoreArtifacts()
 	}
 
 	override func tearDown() {
-		let storeURL = testSpecificURL()
-		try? FileManager.default.removeItem(at: storeURL)
+		deleteStoreArtifacts()
 	}
 	
 	//  ***********************
@@ -118,6 +116,10 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	
 	private func testSpecificURL() -> URL {
 		return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("ObjectBoxFeedStore.store")
+	}
+	
+	private func deleteStoreArtifacts() {
+		try? FileManager.default.removeItem(at: testSpecificURL())
 	}
 	
 }
