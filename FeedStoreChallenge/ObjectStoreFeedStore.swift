@@ -26,12 +26,15 @@ class StoreFeed: Entity {
 }
 
 public class ObjectBoxFeedStore: FeedStore {
-	public init() {}
+	private let storeURL: URL
+	
+	public init(storeURL: URL) {
+		self.storeURL = storeURL
+	}
 	
 	public func deleteCachedFeed(completion: @escaping DeletionCompletion) {}
 	
 	public func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
-		let storeURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("ObjectBoxFeedStore.store")
 		let store = try! Store(directoryPath: storeURL.path)
 		
 		let cache = Cache()
@@ -53,7 +56,6 @@ public class ObjectBoxFeedStore: FeedStore {
 	}
 	
 	public func retrieve(completion: @escaping RetrievalCompletion) {
-		let storeURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("ObjectBoxFeedStore.store")
 		let store = try! Store(directoryPath: storeURL.path)
 		
 		guard let cache = try! store.box(for: Cache.self).all().first else {

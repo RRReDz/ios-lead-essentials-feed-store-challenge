@@ -104,7 +104,8 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	// - MARK: Helpers
 	
 	private func makeSUT() throws -> FeedStore {
-		let sut = ObjectBoxFeedStore()
+		let storeURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("ObjectBoxFeedStore.store")
+		let sut = ObjectBoxFeedStore(storeURL: storeURL)
 		trackForMemoryLeaks(sut)
 		return sut
 	}
