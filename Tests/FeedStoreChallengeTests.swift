@@ -8,12 +8,12 @@ import FeedStoreChallenge
 class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	
 	override func setUp() {
-		let storeURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("ObjectBoxFeedStore.store")
+		let storeURL = testSpecificURL()
 		try? FileManager.default.removeItem(at: storeURL)
 	}
 
 	override func tearDown() {
-		let storeURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("ObjectBoxFeedStore.store")
+		let storeURL = testSpecificURL()
 		try? FileManager.default.removeItem(at: storeURL)
 	}
 	
@@ -104,7 +104,7 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	// - MARK: Helpers
 	
 	private func makeSUT() throws -> FeedStore {
-		let storeURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("ObjectBoxFeedStore.store")
+		let storeURL = testSpecificURL()
 		let sut = ObjectBoxFeedStore(storeURL: storeURL)
 		trackForMemoryLeaks(sut)
 		return sut
@@ -114,6 +114,10 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 		addTeardownBlock { [weak instance] in
 			XCTAssertNil(instance, "Instance should have been deallocated. Potential memory leak.", file: file, line: line)
 		}
+	}
+	
+	private func testSpecificURL() -> URL {
+		return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("ObjectBoxFeedStore.store")
 	}
 	
 }
