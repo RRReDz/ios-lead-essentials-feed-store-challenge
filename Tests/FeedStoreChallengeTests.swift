@@ -171,9 +171,22 @@ extension FeedStoreChallengeTests: FailableRetrieveFeedStoreSpecs {
 	}
 
 	func test_retrieve_hasNoSideEffectsOnFailure() throws {
-//		let sut = try makeSUT()
-//
-//		assertThatRetrieveHasNoSideEffectsOnFailure(on: sut)
+		let sut = try makeSUT()
+		
+		let store = try Store(directoryPath: testSpecificURL().path)
+		let cache = Cache()
+		cache.timestamp = Date()
+
+		let storeFeed = StoreFeed()
+		storeFeed.modelId = "Invalid UUID"
+		storeFeed.description = "A description"
+		storeFeed.location = "A location"
+		storeFeed.url = "Invalid URL"
+		storeFeed.cache.target = cache
+
+		try! store.box(for: StoreFeed.self).put(storeFeed)
+
+		assertThatRetrieveHasNoSideEffectsOnFailure(on: sut)
 	}
 
 }
