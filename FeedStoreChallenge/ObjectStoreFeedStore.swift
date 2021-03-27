@@ -75,7 +75,8 @@ public class ObjectBoxFeedStore: FeedStore {
 				guard let cache = try getCache() else {
 					return completion(.empty)
 				}
-				completion(.found(feed: try map(cache.feed), timestamp: cache.timestamp))
+				let localFeedStore = try ObjectBoxFeedStore.map(cache.feed)
+				completion(.found(feed: localFeedStore, timestamp: cache.timestamp))
 			} catch {
 				completion(.failure(error))
 			}
@@ -95,7 +96,7 @@ public class ObjectBoxFeedStore: FeedStore {
 		return try cacheBox.all().first
 	}
 	
-	private func map(_ storeFeed: ToMany<StoreFeed>) throws -> [LocalFeedImage] {
+	private static func map(_ storeFeed: ToMany<StoreFeed>) throws -> [LocalFeedImage] {
 		let localFeed: [LocalFeedImage] = try storeFeed.map {
 			guard let uuid = UUID(uuidString: $0.modelId) else {
 				throw Error.parsingIntoLocal(param: "modelId", value: $0.modelId)
