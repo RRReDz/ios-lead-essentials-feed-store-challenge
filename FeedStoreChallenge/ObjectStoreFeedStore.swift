@@ -74,29 +74,38 @@ public class ObjectBoxFeedStore: FeedStore {
 		}
 	}
 	
+	private func getCache() throws -> Cache? {
+		let cacheBox = store.box(for: Cache.self)
+		return try cacheBox.all().first
+	}
+	
+	private func map(_ storeFeed: ToMany<StoreFeed>) throws -> [LocalFeedImage] {
+		let localFeed: [LocalFeedImage] = try storeFeed.map {
+			guard let uuid = UUID(uuidString: $0.modelId) else {
+				throw Error.parsingIntoLocal(param: "modelId", value: $0.modelId)
+			}
+			
+			guard let url = URL(string: $0.url) else {
+				throw Error.parsingIntoLocal(param: "url", value: $0.url)
+			}
+			
+			return LocalFeedImage(
+				id: uuid,
+				description: $0.description,
+				location: $0.location,
+				url: url
+			)
+		}
+		return localFeed
+	}
+	
 	public func retrieve(completion: @escaping RetrievalCompletion) {
 		queue.async { [unowned self] in
 			do {
-				guard let cache = try self.store.box(for: Cache.self).all().first else {
+				guard let cache = try getCache() else {
 					return completion(.empty)
 				}
-				
-				let localFeed: [LocalFeedImage] = try cache.feed.map {
-					guard let uuid = UUID(uuidString: $0.modelId) else {
-						throw Error.parsingIntoLocal(param: "modelId", value: $0.modelId)
-					}
-					guard let url = URL(string: $0.url) else {
-						throw Error.parsingIntoLocal(param: "url", value: $0.url)
-					}
-					
-					return LocalFeedImage(
-						id: uuid,
-						description: $0.description,
-						location: $0.location,
-						url: url
-					)
-				}
-				completion(.found(feed: localFeed, timestamp: cache.timestamp))
+				completion(.found(feed: try map(cache.feed), timestamp: cache.timestamp))
 			} catch {
 				completion(.failure(error))
 			}
