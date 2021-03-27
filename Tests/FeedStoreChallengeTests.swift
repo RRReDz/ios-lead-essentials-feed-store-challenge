@@ -4,6 +4,7 @@
 
 import XCTest
 import FeedStoreChallenge
+import ObjectBox
 
 class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	
@@ -132,21 +133,50 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 //
 //  ***********************
 
-//extension FeedStoreChallengeTests: FailableRetrieveFeedStoreSpecs {
+class Cache: Entity {
+	var id: Id = 0
+	var timestamp: Date = Date()
+	// objectbox: backlink = "cache"
+	var feed: ToMany<StoreFeed> = nil
+}
+
+class StoreFeed: Entity {
+	var id: Id = 0
+	var modelId: String = ""
+	var description: String?
+	var location: String?
+	var url: String = ""
+	var cache: ToOne<Cache> = nil
+}
+
+extension FeedStoreChallengeTests: FailableRetrieveFeedStoreSpecs {
+
+	func test_retrieve_deliversFailureOnRetrievalError() throws {
+		let sut = try makeSUT()
+		
+		let store = try Store(directoryPath: testSpecificURL().path)
+		let cache = Cache()
+		cache.timestamp = Date()
+
+		let storeFeed = StoreFeed()
+		storeFeed.modelId = "Invalid UUID"
+		storeFeed.description = "A description"
+		storeFeed.location = "A location"
+		storeFeed.url = "Invalid URL"
+		storeFeed.cache.target = cache
+
+		try! store.box(for: StoreFeed.self).put(storeFeed)
+
+		assertThatRetrieveDeliversFailureOnRetrievalError(on: sut)
+	}
+
+	func test_retrieve_hasNoSideEffectsOnFailure() throws {
+//		let sut = try makeSUT()
 //
-//	func test_retrieve_deliversFailureOnRetrievalError() throws {
-////		let sut = try makeSUT()
-////
-////		assertThatRetrieveDeliversFailureOnRetrievalError(on: sut)
-//	}
-//
-//	func test_retrieve_hasNoSideEffectsOnFailure() throws {
-////		let sut = try makeSUT()
-////
-////		assertThatRetrieveHasNoSideEffectsOnFailure(on: sut)
-//	}
-//
-//}
+//		assertThatRetrieveHasNoSideEffectsOnFailure(on: sut)
+	}
+
+}
 
 //extension FeedStoreChallengeTests: FailableInsertFeedStoreSpecs {
 //

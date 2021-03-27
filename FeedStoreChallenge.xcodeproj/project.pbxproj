@@ -19,6 +19,7 @@
 		08CE2BB32285BCE700183A1B /* XCTestCase+FailableInsertFeedStoreSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08CE2BAE2285BCE700183A1B /* XCTestCase+FailableInsertFeedStoreSpecs.swift */; };
 		08CE2BB52285BEF100183A1B /* FeedStoreChallengeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08CE2BB42285BEF100183A1B /* FeedStoreChallengeTests.swift */; };
 		3AF49F4D3FF1C741CF1A711F /* Pods_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1C62B81A1CAC0E11909FAE7 /* Pods_Tests.framework */; };
+		738F3ECF260EA48200BAD1DA /* EntityInfo-FeedStoreChallenge.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = FECC0D2EBF1901017281BEA0 /* EntityInfo-FeedStoreChallenge.generated.swift */; };
 		73B2647126093A75004AC1A1 /* ObjectStoreFeedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73B2647026093A75004AC1A1 /* ObjectStoreFeedStore.swift */; };
 		B9BC207CDA47A42FD6DF64B3 /* Pods_FeedStoreChallenge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D433E9C95B91FD2C915843D /* Pods_FeedStoreChallenge.framework */; };
 		F5A24C9D642FB5986A909E1D /* EntityInfo-FeedStoreChallenge.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = FECC0D2EBF1901017281BEA0 /* EntityInfo-FeedStoreChallenge.generated.swift */; };
@@ -375,6 +376,7 @@
 				08CE2BB22285BCE700183A1B /* XCTestCase+FailableDeleteFeedStoreSpecs.swift in Sources */,
 				08CE2BB02285BCE700183A1B /* FeedStoreSpecs.swift in Sources */,
 				084BB13C24FE50A10091C705 /* FeedStoreIntegrationTests.swift in Sources */,
+				738F3ECF260EA48200BAD1DA /* EntityInfo-FeedStoreChallenge.generated.swift in Sources */,
 				08CE2BB12285BCE700183A1B /* XCTestCase+FailableRetrieveFeedStoreSpecs.swift in Sources */,
 				08CE2BAF2285BCE700183A1B /* XCTestCase+FeedStoreSpecs.swift in Sources */,
 				08CE2BB32285BCE700183A1B /* XCTestCase+FailableInsertFeedStoreSpecs.swift in Sources */,

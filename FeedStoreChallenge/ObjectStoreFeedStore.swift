@@ -30,6 +30,10 @@ public class ObjectBoxFeedStore: FeedStore {
 	private let store: Store
 	private let queue: DispatchQueue
 	
+	private enum Error: Swift.Error {
+		case parsingIntoLocal(param: String, value: String)
+	}
+	
 	public init(storeURL: URL) throws {
 		self.storeURL = storeURL
 		self.store = try Store(directoryPath: storeURL.path)
@@ -72,18 +76,31 @@ public class ObjectBoxFeedStore: FeedStore {
 	
 	public func retrieve(completion: @escaping RetrievalCompletion) {
 		queue.async { [unowned self] in
-			guard let cache = try! self.store.box(for: Cache.self).all().first else {
-				return completion(.empty)
+			do {
+				guard let cache = try self.store.box(for: Cache.self).all().first else {
+					return completion(.empty)
+				}
+				
+				let localFeed: [LocalFeedImage] = try cache.feed.map {
+					guard let uuid = UUID(uuidString: $0.modelId) else {
+						throw Error.parsingIntoLocal(param: "modelId", value: $0.modelId)
+					}
+					guard let url = URL(string: $0.url) else {
+						throw Error.parsingIntoLocal(param: "url", value: $0.url)
+					}
+					
+					return LocalFeedImage(
+						id: uuid,
+						description: $0.description,
+						location: $0.location,
+						url: url
+					)
+				}
+				completion(.found(feed: localFeed, timestamp: cache.timestamp))
+			} catch {
+				completion(.failure(error))
 			}
-			let localFeed = cache.feed.map {
-				LocalFeedImage(
-					id: UUID(uuidString: $0.modelId)!,
-					description: $0.description,
-					location: $0.location,
-					url: URL(string: $0.url)!
-				)
-			}
-			completion(.found(feed: localFeed, timestamp: cache.timestamp))
+			
 		}
 	}
 }
