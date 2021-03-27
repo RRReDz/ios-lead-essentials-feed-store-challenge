@@ -103,7 +103,7 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	// - MARK: Helpers
 	
 	private func makeSUT(storeURL: URL? = nil) throws -> FeedStore {
-		let sut = try! ObjectBoxFeedStore(storeURL: storeURL ?? testSpecificURL())
+		let sut = try ObjectBoxFeedStore(storeURL: storeURL ?? testSpecificURL())
 		trackForMemoryLeaks(sut)
 		return sut
 	}
