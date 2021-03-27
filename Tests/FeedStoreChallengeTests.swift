@@ -149,11 +149,8 @@ class StoreFeed: Entity {
 }
 
 extension FeedStoreChallengeTests: FailableRetrieveFeedStoreSpecs {
-
-	func test_retrieve_deliversFailureOnRetrievalError() throws {
-		let storeURL = testSpecificURL()
-		let sut = try makeSUT(storeURL: storeURL)
-		
+	
+	private func addInvalidFormattedFeedTo(storeURL: URL) throws {
 		let store = try Store(directoryPath: storeURL.path)
 		let cache = Cache()
 		cache.timestamp = Date()
@@ -166,6 +163,13 @@ extension FeedStoreChallengeTests: FailableRetrieveFeedStoreSpecs {
 		storeFeed.cache.target = cache
 
 		try! store.box(for: StoreFeed.self).put(storeFeed)
+	}
+
+	func test_retrieve_deliversFailureOnRetrievalError() throws {
+		let storeURL = testSpecificURL()
+		let sut = try makeSUT(storeURL: storeURL)
+		
+		try addInvalidFormattedFeedTo(storeURL: storeURL)
 
 		assertThatRetrieveDeliversFailureOnRetrievalError(on: sut)
 	}
@@ -174,18 +178,7 @@ extension FeedStoreChallengeTests: FailableRetrieveFeedStoreSpecs {
 		let storeURL = testSpecificURL()
 		let sut = try makeSUT(storeURL: storeURL)
 		
-		let store = try Store(directoryPath: storeURL.path)
-		let cache = Cache()
-		cache.timestamp = Date()
-
-		let storeFeed = StoreFeed()
-		storeFeed.modelId = "Invalid UUID"
-		storeFeed.description = "A description"
-		storeFeed.location = "A location"
-		storeFeed.url = "Invalid URL"
-		storeFeed.cache.target = cache
-
-		try! store.box(for: StoreFeed.self).put(storeFeed)
+		try addInvalidFormattedFeedTo(storeURL: storeURL)
 
 		assertThatRetrieveHasNoSideEffectsOnFailure(on: sut)
 	}
