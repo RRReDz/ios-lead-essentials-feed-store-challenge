@@ -47,11 +47,6 @@ public class ObjectBoxFeedStore: FeedStore {
 		}
 	}
 	
-	private func clearCache() {
-		try! self.store.box(for: Cache.self).removeAll()
-		try! self.store.box(for: StoreFeed.self).removeAll()
-	}
-	
 	public func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
 		queue.async(flags: .barrier) { [unowned self] in
 			let cache = Cache()
@@ -72,6 +67,27 @@ public class ObjectBoxFeedStore: FeedStore {
 			
 			completion(nil)
 		}
+	}
+	
+	public func retrieve(completion: @escaping RetrievalCompletion) {
+		queue.async { [unowned self] in
+			do {
+				guard let cache = try getCache() else {
+					return completion(.empty)
+				}
+				completion(.found(feed: try map(cache.feed), timestamp: cache.timestamp))
+			} catch {
+				completion(.failure(error))
+			}
+			
+		}
+	}
+	
+	// MARK: - Private
+	
+	private func clearCache() {
+		try! self.store.box(for: Cache.self).removeAll()
+		try! self.store.box(for: StoreFeed.self).removeAll()
 	}
 	
 	private func getCache() throws -> Cache? {
@@ -97,19 +113,5 @@ public class ObjectBoxFeedStore: FeedStore {
 			)
 		}
 		return localFeed
-	}
-	
-	public func retrieve(completion: @escaping RetrievalCompletion) {
-		queue.async { [unowned self] in
-			do {
-				guard let cache = try getCache() else {
-					return completion(.empty)
-				}
-				completion(.found(feed: try map(cache.feed), timestamp: cache.timestamp))
-			} catch {
-				completion(.failure(error))
-			}
-			
-		}
 	}
 }
