@@ -102,9 +102,8 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	
 	// - MARK: Helpers
 	
-	private func makeSUT() throws -> FeedStore {
-		let storeURL = testSpecificURL()
-		let sut = try! ObjectBoxFeedStore(storeURL: storeURL)
+	private func makeSUT(storeURL: URL? = nil) throws -> FeedStore {
+		let sut = try! ObjectBoxFeedStore(storeURL: storeURL ?? testSpecificURL())
 		trackForMemoryLeaks(sut)
 		return sut
 	}
@@ -152,9 +151,10 @@ class StoreFeed: Entity {
 extension FeedStoreChallengeTests: FailableRetrieveFeedStoreSpecs {
 
 	func test_retrieve_deliversFailureOnRetrievalError() throws {
-		let sut = try makeSUT()
+		let storeURL = testSpecificURL()
+		let sut = try makeSUT(storeURL: storeURL)
 		
-		let store = try Store(directoryPath: testSpecificURL().path)
+		let store = try Store(directoryPath: storeURL.path)
 		let cache = Cache()
 		cache.timestamp = Date()
 
@@ -171,9 +171,10 @@ extension FeedStoreChallengeTests: FailableRetrieveFeedStoreSpecs {
 	}
 
 	func test_retrieve_hasNoSideEffectsOnFailure() throws {
-		let sut = try makeSUT()
+		let storeURL = testSpecificURL()
+		let sut = try makeSUT(storeURL: storeURL)
 		
-		let store = try Store(directoryPath: testSpecificURL().path)
+		let store = try Store(directoryPath: storeURL.path)
 		let cache = Cache()
 		cache.timestamp = Date()
 
