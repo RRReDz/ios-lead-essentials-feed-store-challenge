@@ -63,7 +63,7 @@ public class ObjectBoxFeedStore: FeedStore {
 			}
 			
 			self.clearCache()
-			try! self.store.box(for: StoreFeed.self).put(storeFeeds)
+			try? self.store.box(for: StoreFeed.self).put(storeFeeds)
 			
 			completion(nil)
 		}
