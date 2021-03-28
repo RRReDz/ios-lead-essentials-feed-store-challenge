@@ -72,7 +72,7 @@ class FeedStoreIntegrationTests: XCTestCase {
 	// - MARK: Helpers
 	
 	private func makeSUT() throws -> FeedStore {
-		return try ObjectBoxFeedStore(storeURL: testSpecificURL())
+		return try ObjectBoxFeedStore(storeURL: specificURLForTest())
 	}
 	
 	private func setupEmptyStoreState() throws {
@@ -81,13 +81,5 @@ class FeedStoreIntegrationTests: XCTestCase {
 	
 	private func undoStoreSideEffects() throws {
 		deleteStoreArtifacts()
-	}
-	
-	private func testSpecificURL() -> URL {
-		return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("\(type(of: self)).store")
-	}
-	
-	private func deleteStoreArtifacts() {
-		try? FileManager.default.removeItem(at: testSpecificURL())
 	}
 }

@@ -103,7 +103,7 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	// - MARK: Helpers
 	
 	private func makeSUT(storeURL: URL? = nil) throws -> FeedStore {
-		let sut = try ObjectBoxFeedStore(storeURL: storeURL ?? testSpecificURL())
+		let sut = try ObjectBoxFeedStore(storeURL: storeURL ?? specificURLForTest())
 		trackForMemoryLeaks(sut)
 		return sut
 	}
@@ -112,14 +112,6 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 		addTeardownBlock { [weak instance] in
 			XCTAssertNil(instance, "Instance should have been deallocated. Potential memory leak.", file: file, line: line)
 		}
-	}
-	
-	private func testSpecificURL() -> URL {
-		return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("\(type(of: self)).store")
-	}
-	
-	private func deleteStoreArtifacts() {
-		try? FileManager.default.removeItem(at: testSpecificURL())
 	}
 	
 }
@@ -166,7 +158,7 @@ extension FeedStoreChallengeTests: FailableRetrieveFeedStoreSpecs {
 	}
 
 	func test_retrieve_deliversFailureOnRetrievalError() throws {
-		let storeURL = testSpecificURL()
+		let storeURL = specificURLForTest()
 		let sut = try makeSUT(storeURL: storeURL)
 		
 		try addInvalidFormattedFeedTo(storeURL: storeURL)
@@ -175,7 +167,7 @@ extension FeedStoreChallengeTests: FailableRetrieveFeedStoreSpecs {
 	}
 
 	func test_retrieve_hasNoSideEffectsOnFailure() throws {
-		let storeURL = testSpecificURL()
+		let storeURL = specificURLForTest()
 		let sut = try makeSUT(storeURL: storeURL)
 		
 		try addInvalidFormattedFeedTo(storeURL: storeURL)
