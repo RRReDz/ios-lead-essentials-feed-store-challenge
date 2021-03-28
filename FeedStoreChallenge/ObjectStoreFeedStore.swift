@@ -63,7 +63,7 @@ public class ObjectBoxFeedStore: FeedStore {
 			}
 			
 			try? self.clearCache()
-			try? self.store.box(for: StoreFeed.self).put(storeFeeds)
+			try? self.setCache(storeFeeds: storeFeeds)
 			
 			completion(nil)
 		}
@@ -88,6 +88,10 @@ public class ObjectBoxFeedStore: FeedStore {
 	private func clearCache() throws {
 		try self.store.box(for: Cache.self).removeAll()
 		try self.store.box(for: StoreFeed.self).removeAll()
+	}
+	
+	private func setCache(storeFeeds: [StoreFeed]) throws {
+		try self.store.box(for: StoreFeed.self).put(storeFeeds)
 	}
 	
 	private func getCache() -> Cache? {
