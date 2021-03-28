@@ -27,7 +27,7 @@ extension Cache: ObjectBox.EntityInspectable {
     fileprivate static func buildEntity(modelBuilder: ObjectBox.ModelBuilder) throws {
         let entityBuilder = try modelBuilder.entityBuilder(for: Cache.self, id: 1, uid: 164709581013642496)
         try entityBuilder.addProperty(name: "id", type: Id.entityPropertyType, flags: [.id], id: 1, uid: 5702401820512701184)
-        try entityBuilder.addProperty(name: "timestamp", type: Date.entityPropertyType, id: 2, uid: 869714109721840384)
+        try entityBuilder.addProperty(name: "timestamp", type: Double.entityPropertyType, id: 2, uid: 869714109721840384)
 
         try entityBuilder.lastProperty(id: 4, uid: 756950014483775232)
     }
@@ -45,7 +45,7 @@ extension Cache {
     /// You may want to use this in queries to specify fetch conditions, for example:
     ///
     ///     box.query { Cache.timestamp > 1234 }
-    internal static var timestamp: Property<Cache, Date, Void> { return Property<Cache, Date, Void>(propertyId: 2, isPrimaryKey: false) }
+    internal static var timestamp: Property<Cache, Double, Void> { return Property<Cache, Double, Void>(propertyId: 2, isPrimaryKey: false) }
     /// Use `Cache.feed` to refer to this ToMany relation property in queries,
     /// like when using `QueryBuilder.and(property:, conditions:)`.
 
@@ -72,7 +72,7 @@ extension ObjectBox.Property where E == Cache {
     ///
     ///     box.query { .timestamp > 1234 }
 
-    internal static var timestamp: Property<Cache, Date, Void> { return Property<Cache, Date, Void>(propertyId: 2, isPrimaryKey: false) }
+    internal static var timestamp: Property<Cache, Double, Void> { return Property<Cache, Double, Void>(propertyId: 2, isPrimaryKey: false) }
 
     /// Use `.feed` to refer to this ToMany relation property in queries, like when using
     /// `QueryBuilder.and(property:, conditions:)`.

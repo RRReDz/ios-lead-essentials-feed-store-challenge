@@ -35,11 +35,11 @@ public class ObjectBoxFeedStore: FeedStore {
 	
 	class Cache: Entity {
 		var id: Id = 0
-		var timestamp: Date
+		var timestamp: Double
 		// objectbox: backlink = "cache"
 		var feed: ToMany<StoreFeed> = nil
 		
-		init(timestamp: Date = Date()) {
+		init(timestamp: Double = 0.0) {
 			self.timestamp = timestamp
 		}
 	}
@@ -73,7 +73,7 @@ public class ObjectBoxFeedStore: FeedStore {
 	public func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
 		queue.async(flags: .barrier) { [weak self] in
 			guard let self = self else { return }
-			let cache = Cache(timestamp: timestamp)
+			let cache = Cache(timestamp: timestamp.timeIntervalSinceReferenceDate)
 			let storeFeeds: [StoreFeed] = feed.toStore(with: cache)
 			
 			self.clearCache()
@@ -91,7 +91,8 @@ public class ObjectBoxFeedStore: FeedStore {
 					return completion(.empty)
 				}
 				let localFeedStore = try ObjectBoxFeedStore.map(cache.feed)
-				completion(.found(feed: localFeedStore, timestamp: cache.timestamp))
+				let dateTimestamp = Date(timeIntervalSinceReferenceDate: cache.timestamp)
+				completion(.found(feed: localFeedStore, timestamp: dateTimestamp))
 			} catch {
 				completion(.failure(error))
 			}
