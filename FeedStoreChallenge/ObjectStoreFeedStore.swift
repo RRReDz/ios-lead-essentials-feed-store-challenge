@@ -27,6 +27,14 @@ class StoreFeed: Entity {
 	var location: String?
 	var url: String = ""
 	var cache: ToOne<Cache> = nil
+	
+	init(modelId: String = "", description: String? = nil, location: String? = nil, url: String = "", cache: Cache? = nil) {
+		self.modelId = modelId
+		self.description = description
+		self.location = location
+		self.url = url
+		self.cache.target = cache
+	}
 }
 
 public class ObjectBoxFeedStore: FeedStore {
@@ -117,13 +125,13 @@ public class ObjectBoxFeedStore: FeedStore {
 private extension Array where Element == LocalFeedImage {
 	func toStore(with cache: Cache) -> [StoreFeed] {
 		self.map {
-			let storeFeed = StoreFeed()
-			storeFeed.modelId = $0.id.uuidString
-			storeFeed.description = $0.description
-			storeFeed.location = $0.location
-			storeFeed.url = $0.url.absoluteString
-			storeFeed.cache.target = cache
-			return storeFeed
+			return StoreFeed(
+				modelId: $0.id.uuidString,
+				description: $0.description,
+				location: $0.location,
+				url: $0.url.absoluteString,
+				cache: cache
+			)
 		}
 	}
 }
