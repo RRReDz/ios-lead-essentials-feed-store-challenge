@@ -14,6 +14,8 @@ typealias Cache = ObjectBoxFeedStore.Cache
 
 public class ObjectBoxFeedStore: FeedStore {
 	
+	// MARK: - Inner classes & enums
+	
 	class StoreFeed: Entity {
 		var id: Id = 0
 		var modelId: String = ""
@@ -42,13 +44,17 @@ public class ObjectBoxFeedStore: FeedStore {
 		}
 	}
 	
+	private enum Error: Swift.Error {
+		case parsingIntoLocal(param: String, value: String)
+	}
+	
+	// MARK: - Private properties
+	
 	private let storeURL: URL
 	private let store: Store
 	private let queue: DispatchQueue
 	
-	private enum Error: Swift.Error {
-		case parsingIntoLocal(param: String, value: String)
-	}
+	// MARK: - Public init & methods
 	
 	public init(storeURL: URL) throws {
 		self.storeURL = storeURL
@@ -130,6 +136,8 @@ public class ObjectBoxFeedStore: FeedStore {
 		return localFeed
 	}
 }
+
+// MARK: Private extensions
 
 private extension Array where Element == LocalFeedImage {
 	func toStore(with cache: Cache) -> [StoreFeed] {
