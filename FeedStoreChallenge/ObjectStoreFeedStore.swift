@@ -51,16 +51,7 @@ public class ObjectBoxFeedStore: FeedStore {
 		queue.async(flags: .barrier) { [unowned self] in
 			let cache = Cache()
 			cache.timestamp = timestamp
-			
-			let storeFeeds: [StoreFeed] = feed.map {
-				let storeFeed = StoreFeed()
-				storeFeed.modelId = $0.id.uuidString
-				storeFeed.description = $0.description
-				storeFeed.location = $0.location
-				storeFeed.url = $0.url.absoluteString
-				storeFeed.cache.target = cache
-				return storeFeed
-			}
+			let storeFeeds: [StoreFeed] = feed.toStore(with: cache)
 			
 			try? self.clearCache()
 			try? self.setCache(storeFeeds: storeFeeds)
@@ -117,5 +108,19 @@ public class ObjectBoxFeedStore: FeedStore {
 			)
 		}
 		return localFeed
+	}
+}
+
+private extension Array where Element == LocalFeedImage {
+	func toStore(with cache: Cache) -> [StoreFeed] {
+		self.map {
+			let storeFeed = StoreFeed()
+			storeFeed.modelId = $0.id.uuidString
+			storeFeed.description = $0.description
+			storeFeed.location = $0.location
+			storeFeed.url = $0.url.absoluteString
+			storeFeed.cache.target = cache
+			return storeFeed
+		}
 	}
 }
