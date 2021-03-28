@@ -42,7 +42,7 @@ public class ObjectBoxFeedStore: FeedStore {
 	
 	public func deleteCachedFeed(completion: @escaping DeletionCompletion) {
 		queue.async(flags: .barrier) { [unowned self] in
-			self.clearCache()
+			try! self.clearCache()
 			completion(nil)
 		}
 	}
@@ -62,7 +62,7 @@ public class ObjectBoxFeedStore: FeedStore {
 				return storeFeed
 			}
 			
-			self.clearCache()
+			try! self.clearCache()
 			try? self.store.box(for: StoreFeed.self).put(storeFeeds)
 			
 			completion(nil)
@@ -80,15 +80,14 @@ public class ObjectBoxFeedStore: FeedStore {
 			} catch {
 				completion(.failure(error))
 			}
-			
 		}
 	}
 	
 	// MARK: - Private
 	
-	private func clearCache() {
-		try! self.store.box(for: Cache.self).removeAll()
-		try! self.store.box(for: StoreFeed.self).removeAll()
+	private func clearCache() throws {
+		try self.store.box(for: Cache.self).removeAll()
+		try self.store.box(for: StoreFeed.self).removeAll()
 	}
 	
 	private func getCache() -> Cache? {
