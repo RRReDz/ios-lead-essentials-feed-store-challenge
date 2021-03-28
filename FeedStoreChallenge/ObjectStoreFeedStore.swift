@@ -11,9 +11,13 @@ import ObjectBox
 
 class Cache: Entity {
 	var id: Id = 0
-	var timestamp: Date = Date()
+	var timestamp: Date
 	// objectbox: backlink = "cache"
 	var feed: ToMany<StoreFeed> = nil
+	
+	init(timestamp: Date = Date()) {
+		self.timestamp = timestamp
+	}
 }
 
 class StoreFeed: Entity {
@@ -49,8 +53,7 @@ public class ObjectBoxFeedStore: FeedStore {
 	
 	public func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
 		queue.async(flags: .barrier) { [unowned self] in
-			let cache = Cache()
-			cache.timestamp = timestamp
+			let cache = Cache(timestamp: timestamp)
 			let storeFeeds: [StoreFeed] = feed.toStore(with: cache)
 			
 			try? self.clearCache()
