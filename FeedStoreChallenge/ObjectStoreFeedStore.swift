@@ -83,9 +83,10 @@ public class ObjectBoxFeedStore: FeedStore {
 	}
 	
 	public func retrieve(completion: @escaping RetrievalCompletion) {
-		queue.async { [unowned self] in
+		queue.async { [weak self] in
+			guard let self = self else { return }
 			do {
-				guard let cache = getCache() else {
+				guard let cache = self.getCache() else {
 					return completion(.empty)
 				}
 				let localFeedStore = try ObjectBoxFeedStore.map(cache.feed)
