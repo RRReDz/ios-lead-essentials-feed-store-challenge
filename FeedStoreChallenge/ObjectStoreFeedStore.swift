@@ -9,35 +9,39 @@
 import Foundation
 import ObjectBox
 
-class Cache: Entity {
-	var id: Id = 0
-	var timestamp: Date
-	// objectbox: backlink = "cache"
-	var feed: ToMany<StoreFeed> = nil
-	
-	init(timestamp: Date = Date()) {
-		self.timestamp = timestamp
-	}
-}
-
-class StoreFeed: Entity {
-	var id: Id = 0
-	var modelId: String = ""
-	var description: String?
-	var location: String?
-	var url: String = ""
-	var cache: ToOne<Cache> = nil
-	
-	init(modelId: String = "", description: String? = nil, location: String? = nil, url: String = "", cache: Cache? = nil) {
-		self.modelId = modelId
-		self.description = description
-		self.location = location
-		self.url = url
-		self.cache.target = cache
-	}
-}
+typealias StoreFeed = ObjectBoxFeedStore.StoreFeed
+typealias Cache = ObjectBoxFeedStore.Cache
 
 public class ObjectBoxFeedStore: FeedStore {
+	
+	class StoreFeed: Entity {
+		var id: Id = 0
+		var modelId: String = ""
+		var description: String?
+		var location: String?
+		var url: String = ""
+		var cache: ToOne<Cache> = nil
+		
+		init(modelId: String = "", description: String? = nil, location: String? = nil, url: String = "", cache: Cache? = nil) {
+			self.modelId = modelId
+			self.description = description
+			self.location = location
+			self.url = url
+			self.cache.target = cache
+		}
+	}
+	
+	class Cache: Entity {
+		var id: Id = 0
+		var timestamp: Date
+		// objectbox: backlink = "cache"
+		var feed: ToMany<StoreFeed> = nil
+		
+		init(timestamp: Date = Date()) {
+			self.timestamp = timestamp
+		}
+	}
+	
 	private let storeURL: URL
 	private let store: Store
 	private let queue: DispatchQueue
