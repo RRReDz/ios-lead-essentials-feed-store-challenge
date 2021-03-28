@@ -72,7 +72,7 @@ public class ObjectBoxFeedStore: FeedStore {
 	public func retrieve(completion: @escaping RetrievalCompletion) {
 		queue.async { [unowned self] in
 			do {
-				guard let cache = try getCache() else {
+				guard let cache = getCache() else {
 					return completion(.empty)
 				}
 				let localFeedStore = try ObjectBoxFeedStore.map(cache.feed)
@@ -91,9 +91,9 @@ public class ObjectBoxFeedStore: FeedStore {
 		try! self.store.box(for: StoreFeed.self).removeAll()
 	}
 	
-	private func getCache() throws -> Cache? {
+	private func getCache() -> Cache? {
 		let cacheBox = store.box(for: Cache.self)
-		return try cacheBox.all().first
+		return try? cacheBox.all().first
 	}
 	
 	private static func map(_ storeFeed: ToMany<StoreFeed>) throws -> [LocalFeedImage] {
