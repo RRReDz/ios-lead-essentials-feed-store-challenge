@@ -54,7 +54,7 @@ public class ObjectBoxFeedStore: FeedStore {
 	
 	public func deleteCachedFeed(completion: @escaping DeletionCompletion) {
 		queue.async(flags: .barrier) { [unowned self] in
-			try? self.clearCache()
+			self.clearCache()
 			completion(nil)
 		}
 	}
@@ -64,8 +64,8 @@ public class ObjectBoxFeedStore: FeedStore {
 			let cache = Cache(timestamp: timestamp)
 			let storeFeeds: [StoreFeed] = feed.toStore(with: cache)
 			
-			try? self.clearCache()
-			try? self.setCache(storeFeeds: storeFeeds)
+			self.clearCache()
+			self.setCache(storeFeeds: storeFeeds)
 			
 			completion(nil)
 		}
@@ -85,15 +85,20 @@ public class ObjectBoxFeedStore: FeedStore {
 		}
 	}
 	
-	// MARK: - Private
+	// MARK: - Private methods
 	
-	private func clearCache() throws {
-		try self.store.box(for: Cache.self).removeAll()
-		try self.store.box(for: StoreFeed.self).removeAll()
+	private func clearCache() {
+		removeAll(for: Cache.self)
+		removeAll(for: StoreFeed.self)
 	}
 	
-	private func setCache(storeFeeds: [StoreFeed]) throws {
-		try self.store.box(for: StoreFeed.self).put(storeFeeds)
+	@discardableResult
+	private func removeAll<T>(for entityType: T.Type = T.self) -> UInt64? where T : ObjectBox.EntityInspectable, T : ObjectBox.__EntityRelatable, T == T.EntityBindingType.EntityType {
+		return try? self.store.box(for: entityType).removeAll()
+	}
+	
+	private func setCache(storeFeeds: [StoreFeed]) {
+		try? self.store.box(for: StoreFeed.self).put(storeFeeds)
 	}
 	
 	private func getCache() -> Cache? {
