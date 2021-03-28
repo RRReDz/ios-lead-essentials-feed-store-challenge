@@ -71,7 +71,8 @@ public class ObjectBoxFeedStore: FeedStore {
 	}
 	
 	public func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
-		queue.async(flags: .barrier) { [unowned self] in
+		queue.async(flags: .barrier) { [weak self] in
+			guard let self = self else { return }
 			let cache = Cache(timestamp: timestamp)
 			let storeFeeds: [StoreFeed] = feed.toStore(with: cache)
 			
