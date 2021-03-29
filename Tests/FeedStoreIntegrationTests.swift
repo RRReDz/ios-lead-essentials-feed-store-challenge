@@ -71,8 +71,16 @@ class FeedStoreIntegrationTests: XCTestCase {
 	
 	// - MARK: Helpers
 	
-	private func makeSUT() throws -> FeedStore {
-		return try ObjectBoxFeedStore(storeURL: specificURLForTest())
+	private func makeSUT(file: StaticString = #file, line: UInt = #line) throws -> FeedStore {
+		let sut = try ObjectBoxFeedStore(storeURL: specificURLForTest())
+		trackForMemoryLeaks(sut, file: file, line: line)
+		return sut
+	}
+	
+	private func trackForMemoryLeaks(_ instance: AnyObject, file: StaticString = #file, line: UInt = #line) {
+		addTeardownBlock { [weak instance] in
+			XCTAssertNil(instance, "Instance should have been deallocated. Potential memory leak.", file: file, line: line)
+		}
 	}
 	
 	private func setupEmptyStoreState() throws {
@@ -82,4 +90,5 @@ class FeedStoreIntegrationTests: XCTestCase {
 	private func undoStoreSideEffects() throws {
 		deleteStoreArtifacts()
 	}
+	
 }

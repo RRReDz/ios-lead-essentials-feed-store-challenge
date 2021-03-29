@@ -65,7 +65,9 @@ public class ObjectBoxFeedStore: FeedStore {
 	public func deleteCachedFeed(completion: @escaping DeletionCompletion) {
 		queue.async(flags: .barrier) { [weak self] in
 			guard let self = self else { return }
+			
 			self.clearCache()
+			
 			completion(nil)
 		}
 	}
@@ -92,6 +94,7 @@ public class ObjectBoxFeedStore: FeedStore {
 				}
 				let localFeedStore = try ObjectBoxFeedStore.map(cache.feed)
 				let dateTimestamp = Date(timeIntervalSinceReferenceDate: cache.timestamp)
+				
 				completion(.found(feed: localFeedStore, timestamp: dateTimestamp))
 			} catch {
 				completion(.failure(error))
