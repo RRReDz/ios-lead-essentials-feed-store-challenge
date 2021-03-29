@@ -17,4 +17,10 @@ extension XCTestCase {
 	func deleteStoreArtifacts() {
 		try? FileManager.default.removeItem(at: specificURLForTest())
 	}
+	
+	func trackForMemoryLeaks(_ instance: AnyObject, file: StaticString = #file, line: UInt = #line) {
+		addTeardownBlock { [weak instance] in
+			XCTAssertNil(instance, "Instance should have been deallocated. Potential memory leak.", file: file, line: line)
+		}
+	}
 }
