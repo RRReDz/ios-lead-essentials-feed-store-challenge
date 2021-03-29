@@ -1,5 +1,5 @@
 //
-//  ObjectStoreFeedStore.swift
+//  ObjectBoxFeedStore.swift
 //  FeedStoreChallenge
 //
 //  Created by Riccardo Rossi - Home on 22/03/21.
