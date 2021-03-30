@@ -90,12 +90,12 @@ public class ObjectBoxFeedStore: FeedStore {
 	}
 	
 	public func retrieve(completion: @escaping RetrievalCompletion) {
-		queue.async { [weak self] in
-			guard let self = self else { return }
+		queue.async {
 			do {
 				guard let cache = try self.getCache() else {
 					return completion(.empty)
 				}
+				
 				let localFeedStore = try ObjectBoxFeedStore.map(cache.feed)
 				let dateTimestamp = Date(timeIntervalSinceReferenceDate: cache.timestamp)
 				
