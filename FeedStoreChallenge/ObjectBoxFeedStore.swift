@@ -82,7 +82,7 @@ public class ObjectBoxFeedStore: FeedStore {
 				
 				let cache = Cache(timestamp: timestamp.timeIntervalSinceReferenceDate)
 				let storeFeeds: [StoreFeed] = feed.toStore(with: cache)
-				self.setCache(storeFeeds: storeFeeds)
+				try self.setCache(storeFeeds: storeFeeds)
 				
 				completion(nil)
 			} catch {
@@ -115,8 +115,8 @@ public class ObjectBoxFeedStore: FeedStore {
 		try self.store.box(for: StoreFeed.self).removeAll()
 	}
 	
-	private func setCache(storeFeeds: [StoreFeed]) {
-		try? self.store.box(for: StoreFeed.self).put(storeFeeds)
+	private func setCache(storeFeeds: [StoreFeed]) throws {
+		try self.store.box(for: StoreFeed.self).put(storeFeeds)
 	}
 	
 	private func getCache() -> Cache? {
