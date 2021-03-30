@@ -95,7 +95,7 @@ public class ObjectBoxFeedStore: FeedStore {
 		queue.async { [weak self] in
 			guard let self = self else { return }
 			do {
-				guard let cache = self.getCache() else {
+				guard let cache = try self.getCache() else {
 					return completion(.empty)
 				}
 				let localFeedStore = try ObjectBoxFeedStore.map(cache.feed)
@@ -119,9 +119,9 @@ public class ObjectBoxFeedStore: FeedStore {
 		try self.store.box(for: StoreFeed.self).put(storeFeeds)
 	}
 	
-	private func getCache() -> Cache? {
+	private func getCache() throws -> Cache? {
 		let cacheBox = store.box(for: Cache.self)
-		return try? cacheBox.all().first
+		return try cacheBox.all().first
 	}
 	
 	private static func map(_ storeFeed: ToMany<StoreFeed>) throws -> [LocalFeedImage] {
