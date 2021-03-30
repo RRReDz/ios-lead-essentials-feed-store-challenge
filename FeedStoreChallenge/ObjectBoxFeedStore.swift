@@ -18,18 +18,26 @@ public class ObjectBoxFeedStore: FeedStore {
 	
 	class StoreFeed: Entity {
 		var id: Id = 0
-		var modelId: String = ""
+		var modelId: String
 		var description: String?
 		var location: String?
-		var url: String = ""
-		var cache: ToOne<Cache> = nil
+		var url: String
+		var cache: ToOne<Cache>
 		
-		init(modelId: String = "", description: String? = nil, location: String? = nil, url: String = "", cache: Cache? = nil) {
-			self.modelId = modelId
+		init(modelId: UUID, description: String?, location: String?, url: URL, cache: Cache) {
+			self.modelId = modelId.uuidString
 			self.description = description
 			self.location = location
-			self.url = url
-			self.cache.target = cache
+			self.url = url.absoluteString
+			self.cache = ToOne(cache)
+		}
+		
+		init() {
+			self.modelId = ""
+			self.description = nil
+			self.location = nil
+			self.url = ""
+			self.cache = nil
 		}
 	}
 	
@@ -149,10 +157,10 @@ private extension Array where Element == LocalFeedImage {
 	func toStore(with cache: Cache) -> [StoreFeed] {
 		self.map {
 			return StoreFeed(
-				modelId: $0.id.uuidString,
+				modelId: $0.id,
 				description: $0.description,
 				location: $0.location,
-				url: $0.url.absoluteString,
+				url: $0.url,
 				cache: cache
 			)
 		}
