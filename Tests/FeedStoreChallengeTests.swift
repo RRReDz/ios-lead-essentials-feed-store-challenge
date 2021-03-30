@@ -148,7 +148,7 @@ extension FeedStoreChallengeTests: FailableRetrieveFeedStoreSpecs {
 		storeFeed.url = "Invalid URL"
 		storeFeed.cache.target = cache
 
-		try! store.box(for: StoreFeed.self).put(storeFeed)
+		try store.box(for: StoreFeed.self).put(storeFeed)
 	}
 
 	func test_retrieve_deliversFailureOnRetrievalError() throws {
