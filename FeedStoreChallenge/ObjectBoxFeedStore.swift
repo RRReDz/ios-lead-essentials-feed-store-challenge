@@ -66,7 +66,7 @@ public class ObjectBoxFeedStore: FeedStore {
 		queue.async(flags: .barrier) { [weak self] in
 			guard let self = self else { return }
 			
-			self.clearCache()
+			try! self.clearCache()
 			
 			completion(nil)
 		}
@@ -78,7 +78,7 @@ public class ObjectBoxFeedStore: FeedStore {
 			let cache = Cache(timestamp: timestamp.timeIntervalSinceReferenceDate)
 			let storeFeeds: [StoreFeed] = feed.toStore(with: cache)
 			
-			self.clearCache()
+			try! self.clearCache()
 			self.setCache(storeFeeds: storeFeeds)
 			
 			completion(nil)
@@ -104,14 +104,9 @@ public class ObjectBoxFeedStore: FeedStore {
 	
 	// MARK: - Private methods
 	
-	private func clearCache() {
-		removeAll(for: Cache.self)
-		removeAll(for: StoreFeed.self)
-	}
-	
-	@discardableResult
-	private func removeAll<T>(for entityType: T.Type = T.self) -> UInt64? where T : ObjectBox.EntityInspectable, T : ObjectBox.__EntityRelatable, T == T.EntityBindingType.EntityType {
-		return try? self.store.box(for: entityType).removeAll()
+	private func clearCache() throws {
+		try self.store.box(for: Cache.self).removeAll()
+		try self.store.box(for: StoreFeed.self).removeAll()
 	}
 	
 	private func setCache(storeFeeds: [StoreFeed]) {
