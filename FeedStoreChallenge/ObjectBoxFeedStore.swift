@@ -45,10 +45,16 @@ public class ObjectBoxFeedStore: FeedStore {
 		var id: Id = 0
 		var timestamp: Double
 		// objectbox: backlink = "cache"
-		var feed: ToMany<StoreFeed> = nil
+		var feed: ToMany<StoreFeed>
 		
-		init(timestamp: Double = 0.0) {
-			self.timestamp = timestamp
+		init(timestamp: Date) {
+			self.timestamp = timestamp.timeIntervalSinceReferenceDate
+			self.feed = nil
+		}
+		
+		init() {
+			timestamp = 0.0
+			feed = nil
 		}
 	}
 	
@@ -86,7 +92,7 @@ public class ObjectBoxFeedStore: FeedStore {
 			do {
 				try self.clearCache()
 				
-				let cache = Cache(timestamp: timestamp.timeIntervalSinceReferenceDate)
+				let cache = Cache(timestamp: timestamp)
 				let storeFeeds: [StoreFeed] = feed.toStore(with: cache)
 				try self.setCache(storeFeeds: storeFeeds)
 				
