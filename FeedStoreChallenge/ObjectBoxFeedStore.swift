@@ -65,10 +65,12 @@ public class ObjectBoxFeedStore: FeedStore {
 	public func deleteCachedFeed(completion: @escaping DeletionCompletion) {
 		queue.async(flags: .barrier) { [weak self] in
 			guard let self = self else { return }
-			
-			try! self.clearCache()
-			
-			completion(nil)
+			do {
+				try self.clearCache()
+				completion(nil)
+			} catch {
+				completion(error)
+			}
 		}
 	}
 	
